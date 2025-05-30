@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function App() {
   const [task, setTask] = useState('');         // สำหรับ input ที่ผู้ใช้พิมพ์
@@ -9,6 +9,9 @@ export default function App() {
     if (task.trim() === '') return; // ถ้าไม่มีอะไร ไม่เพิ่ม
     setTodos([...todos, { id: Date.now().toString(), title: task.trim() }]);// เพิ่ม task ใหม่
     setTask(''); // ล้างช่อง input
+  };
+  const deleteTask = (id: string) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   return (
@@ -25,7 +28,14 @@ export default function App() {
       <FlatList
         data={todos}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Text style={styles.todoItem}>• {item.title}</Text>}
+        renderItem={({ item }) => (
+          <View style={styles.todoRow}>
+            <Text style={styles.todoItem}>• {item.title}</Text>
+            <TouchableOpacity onPress={() => deleteTask(item.id)}>
+              <Text style={styles.deleteText}>ลบ</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         style={styles.list}
       />
     </View>
@@ -55,8 +65,21 @@ const styles = StyleSheet.create({
   list: {
     marginTop: 20,
   },
+  todoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
   todoItem: {
     fontSize: 18,
-    paddingVertical: 5,
+    flex: 1,
+  },
+  deleteText: {
+    color: 'red',
+    fontSize: 16,
+    marginLeft: 10,
   },
 });
